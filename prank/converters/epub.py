@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 import html2epub
 from pathlib import Path
@@ -14,7 +14,9 @@ class EpubConverter:
 
     def _generate_soup(self):
 
-        webpage = urlopen(self.url).read()
+        headers = {"User-Agent": "Magic Browser"}
+        req = Request(url=self.url, headers=headers)
+        webpage = urlopen(req).read()
         self.soup = BeautifulSoup(webpage, "html.parser")
         self.soup.prettify()
 

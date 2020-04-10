@@ -1,6 +1,6 @@
 from prank.ptypes import Medium
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from functools import lru_cache
 import re
 from urllib.parse import urlparse
@@ -8,7 +8,9 @@ from urllib.parse import urlparse
 # Utility Functions
 @lru_cache(maxsize=32)
 def _get_soup_from_url(url) -> BeautifulSoup:
-    webpage = urlopen(url).read()
+    headers = {"User-Agent": "Magic Browser"}
+    req = Request(url=url, headers=headers)
+    webpage = urlopen(req).read()
     return BeautifulSoup(webpage, "html.parser")
 
 
@@ -39,7 +41,6 @@ class MediumGenerator:
     def get_medium(self, url):
         # Check domain
         url_domain = urlparse(url).netloc
-        print(url_domain)
         for medium in DOMAINS.keys():
             if url_domain in DOMAINS[medium]:
                 return medium
