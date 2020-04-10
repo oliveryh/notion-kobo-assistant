@@ -1,3 +1,4 @@
+import datetime
 from typing import Dict
 
 from notion.block import HeaderBlock, SubheaderBlock, TextBlock
@@ -12,10 +13,11 @@ from prank.config import config
 
 
 class PRANKRow:
-    def __init__(self, url, title, medium, date_completed):
+    def __init__(self, url, title, medium, date_added, date_completed):
         self.url: str = url
         self.title: str = title
         self.medium: Medium = medium
+        self.date_added = date_added
         self.date_completed = date_completed
         self.time_spent = None
         self.status = None
@@ -25,14 +27,12 @@ class PRANKRow:
         return f"<PRANKRow medium={self.medium} title={self.title}>"
 
     def enrich(self):
-        self.title = (
-            self.title
-            if self.title
-            else TitleGenerator().get_title(self.url, self.medium)
-        )
-        self.medium = (
-            self.medium if self.medium else MediumGenerator().get_medium(self.url)
-        )
+        if self.title is None:
+            self.title = TitleGenerator().get_title(self.url, self.medium)
+        if self.medium is None:
+            self.medium = MediumGenerator().get_medium(self.url)
+        if self.date_added is None:
+            self.date_added = datetime.date.today()
 
 
 class PRANKRowCollectionRowBlock(PRANKRow):
@@ -41,8 +41,9 @@ class PRANKRowCollectionRowBlock(PRANKRow):
         url = crb.url
         title = crb.title if len(crb.title) != 0 else None
         medium = Medium[crb.medium] if crb.medium else None
-        date_completed = crb.date_completed
-        super().__init__(url, title, medium, date_completed)
+        date_added = crb.date_added if crb.date_added else None
+        date_completed = crb.date_completed if crb.date_completed else None
+        super().__init__(url, title, medium, date_added, date_completed)
 
     def push(self, crb: CollectionRowBlock):
 
@@ -50,6 +51,7 @@ class PRANKRowCollectionRowBlock(PRANKRow):
         crb.medium = self.medium.name if self.medium else None
         crb.status = self.status.name if self.status else None
         crb.time_spent = self.time_spent
+        crb.date_added = self.date_added
         crb.date_completed = self.date_completed
 
         if self.highlights:
