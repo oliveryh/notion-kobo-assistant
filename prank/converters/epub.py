@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 import html2epub
@@ -41,13 +42,18 @@ class EpubConverter:
     def _generate_title(self):
 
         try:
-            self.title = self.soup.find_all("title")[0].text
+            self.title = self.soup.title.string
         except:
-            self.title = ""
+            self.title = "Unknown Title"
 
     def _convert_chapters_to_epub(self, output_dir):
 
-        epub = html2epub.Epub(self.title)
+        domain_name = urlparse(self.url).netloc
+
+        epub = html2epub.Epub(
+            self.title,
+            creator=domain_name
+        )
         for chapter in self.chapters:
             chapter_epub = html2epub.create_chapter_from_string(
                 chapter["content"], self.url, chapter["title"]
