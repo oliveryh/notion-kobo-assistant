@@ -1,0 +1,3 @@
+[submodule "Html2Epub"]
+	path = Html2Epub
+	url = https://github.com/oliveryh/Html2Epub.git

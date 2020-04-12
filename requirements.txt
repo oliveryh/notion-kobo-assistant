@@ -1,0 +1,7 @@
+pandas
+click
+notion
+beautifulsoup4
+git+https://github.com/karlicoss/kobuddy.git
+confuse
+./Html2Epub
