@@ -12,6 +12,7 @@ class EpubConverter:
         self.title: str = None
         self.soup: Any = None
         self.chapters: List[Dict] = []
+        self.epub: html2epub.Epub = None
 
     def _generate_soup(self):
 
@@ -23,7 +24,11 @@ class EpubConverter:
 
     def _generate_chapter_segments(self):
 
-        h2tags = self.soup.find_all("h2")
+        if len(self.soup.find_all("h1")) > 1:
+            level = "h1"
+        else:
+            level = "h2"
+        htags = self.soup.find_all(level)
 
         def next_element(elem):
             while elem is not None:
@@ -31,13 +36,13 @@ class EpubConverter:
                 if hasattr(elem, "name"):
                     return elem
 
-        for h2tag in h2tags:
-            chapter = [str(h2tag)]
-            elem = next_element(h2tag)
-            while elem and elem.name != "h2":
+        for htag in htags:
+            chapter = [str(htag)]
+            elem = next_element(htag)
+            while elem and elem.name != level:
                 chapter.append(str(elem))
                 elem = next_element(elem)
-            self.chapters.append({"title": h2tag.text, "content": "\n".join(chapter)})
+            self.chapters.append({"title": htag.text, "content": "\n".join(chapter)})
 
     def _generate_title(self):
 
@@ -46,7 +51,7 @@ class EpubConverter:
         except:
             self.title = "Unknown Title"
 
-    def _convert_chapters_to_epub(self, output_dir):
+    def _convert_chapters_to_epub(self):
 
         domain_name = urlparse(self.url).netloc
 
@@ -59,11 +64,18 @@ class EpubConverter:
                 chapter["content"], self.url, chapter["title"]
             )
             epub.add_chapter(chapter_epub)
-        epub.create_epub(output_directory=output_dir)
+        self.epub = epub
+
+    def _save_epub(self, output_dir):
+        self.epub.create_epub(output_directory=output_dir)
 
     def generate_epub(self, book_store: Path):
 
-        self._generate_soup()
-        self._generate_chapter_segments()
-        self._generate_title()
-        self._convert_chapters_to_epub(book_store)
+        if self.url.strip() == "":
+            print("Skipping empty URL")
+        else:
+            self._generate_soup()
+            self._generate_chapter_segments()
+            self._generate_title()
+            self._convert_chapters_to_epub()
+            self._save_epub(book_store)
