@@ -5,3 +5,7 @@ beautifulsoup4
 git+https://github.com/karlicoss/kobuddy.git
 confuse
 ./Html2Epub
+html2markdown
+md2notion
+notion-client
+markdownify

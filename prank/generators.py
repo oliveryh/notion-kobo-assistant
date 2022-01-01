@@ -34,7 +34,7 @@ class TitleGenerator:
 
 
 DOMAINS = {}
-DOMAINS[Medium.VIDEO] = ["www.youtube.com"]
+DOMAINS[Medium.VIDEO] = ["m.youtube.com", "www.youtube.com"]
 
 
 class MediumGenerator:

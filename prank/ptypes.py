@@ -5,6 +5,7 @@ class Medium(Enum):
     OTHER = 0
     ARTICLE = 1
     VIDEO = 2
+    BOOK = 3
 
 
 class Status(Enum):
