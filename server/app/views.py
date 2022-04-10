@@ -1,8 +1,13 @@
+from flask import render_template, request
+
 from app import app, db
-from flask import render_template, request, jsonify
 from app.models import Author, Book
 
-data = [{"title": "Harry", "author": "JK Rowling"}, {"title": "Lord of Rings", "author": "Whoever"}]
+data = [
+    {"title": "Harry", "author": "JK Rowling"},
+    {"title": "Lord of Rings", "author": "Whoever"},
+]
+
 
 @app.route("/", methods=["GET"])
 def home():
@@ -11,10 +16,16 @@ def home():
 
     for book in books:
         author = Author.query.get(book.author_id)
-        book_object = {"id": book.book_id, "title": book.title, "author": author.name, "filename": book.filename}
+        book_object = {
+            "id": book.book_id,
+            "title": book.title,
+            "author": author.name,
+            "filename": book.filename,
+        }
         books_list.append(book_object)
 
     return render_template("index.html", books=books_list)
+
 
 @app.route("/get-book-row/<int:id>", methods=["GET"])
 def get_book_row(id):
@@ -41,6 +52,7 @@ def get_book_row(id):
     """
     return response
 
+
 @app.route("/get-edit-form/<int:id>", methods=["GET"])
 def get_edit_form(id):
     book = Book.query.get(id)
@@ -62,9 +74,12 @@ def get_edit_form(id):
     """
     return response
 
+
 @app.route("/update/<int:id>", methods=["PUT"])
 def update_book(id):
-    db.session.query(Book).filter(Book.book_id == id).update({"title": request.form["title"]})
+    db.session.query(Book).filter(Book.book_id == id).update(
+        {"title": request.form["title"]}
+    )
     db.session.commit()
 
     title = request.form["title"]
@@ -89,7 +104,8 @@ def update_book(id):
         </td>
     </tr>
     """
-    return response 
+    return response
+
 
 @app.route("/delete/<int:id>", methods=["DELETE"])
 def delete_book(id):
@@ -98,6 +114,7 @@ def delete_book(id):
     db.session.commit()
 
     return ""
+
 
 @app.route("/submit", methods=["POST"])
 def submit():

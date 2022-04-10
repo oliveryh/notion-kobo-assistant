@@ -1,7 +1,10 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
 from app import create_db
-import os
+
 persistent_path = os.getenv("PERSISTENT_STORAGE_DIR")
 
 app = Flask(__name__)
@@ -14,8 +17,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-from app import views
-from app import models
+from app import models, views
 
 db.init_app(app)
-db.create_all() 
+db.create_all()
