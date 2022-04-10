@@ -127,11 +127,15 @@ class EpubConverter:
 
     def _convert_epub_to_kepub(self, book_store: Path):
         print("CONVERTING TO KEPUB", self.path_epub)
-        subprocess.run(["/home/oliveryh/Documents/repo/notion-kobo-assistant/bin/kepubify-linux-64bit", self.path_epub], cwd=book_store)
-        try:
-            os.remove(self.path_epub)
-        except FileNotFoundError as exc:
-            pass
+        kepub_path = self.path_epub + ".kepub"
+        if not os.path.exists(kepub_path):
+            subprocess.run(["/home/oliveryh/Documents/repo/notion-kobo-assistant/bin/kepubify-linux-64bit", self.path_epub], cwd=book_store)
+            try:
+                os.remove(self.path_epub)
+            except FileNotFoundError as exc:
+                pass
+        else:
+            print("SKIPPING KEPUB ALREADY CONVERTED")
 
     def generate_epub(self, book_store: Path):
 
