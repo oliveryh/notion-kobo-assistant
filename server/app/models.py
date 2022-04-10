@@ -1,7 +1,10 @@
 from app import db
+from flask_sqlalchemy.model import DefaultMeta
+
+BaseModel: DefaultMeta = db.Model
 
 
-class Author(db.Model):
+class Author(BaseModel):
     author_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     books = db.relationship("Book", backref="author")
@@ -10,7 +13,7 @@ class Author(db.Model):
         return '<Author: {}>'.format(self.books)
 
 
-class Book(db.Model):
+class Book(BaseModel):
     book_id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("author.author_id"))
     title = db.Column(db.String)

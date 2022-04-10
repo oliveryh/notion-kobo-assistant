@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flask-sqlalchemy = "*"
 
 [dev-packages]
 black = "*"
@@ -12,6 +13,7 @@ flake8 = "*"
 mypy = "*"
 pytest = "*"
 pytest-cov = "*"
+sqlalchemy-stubs = "*"
 
 [requires]
 python_version = "3.8"
