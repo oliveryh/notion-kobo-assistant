@@ -36,7 +36,10 @@ def get_urls_from_database(database):
 
 def enrich_database(database):
     for row in database['results']:
-        enrich_entry(row)
+        try:
+            enrich_entry(row)
+        except HTTPError:
+            pass
 
 
 def get_epub_from_url(url):
@@ -70,7 +73,7 @@ def convert_epub_to_kepub(path_epub):
     if not os.path.exists(kepub_path):
         subprocess.run(
             [
-                "/home/oliveryh/Documents/repo/notion-kobo-assistant/bin/kepubify-linux-64bit",
+                "kepubify-linux-64bit",
                 path_epub,
                 "--output",
                 kepub_path,
@@ -81,9 +84,8 @@ def convert_epub_to_kepub(path_epub):
             os.remove(path_epub)
         except FileNotFoundError:
             pass
-        return kepub_path
-    else:
-        return None
+    kepub_filename = os.path.basename(kepub_path)
+    return kepub_filename
 
 
 def convert_urls_to_kepubs():
