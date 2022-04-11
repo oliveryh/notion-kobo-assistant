@@ -1,6 +1,7 @@
 from flask import render_template, request
 
 from app import app, db
+from app.imports import refresh as refresh_books
 from app.models import Author, Book
 
 data = [
@@ -90,6 +91,13 @@ def delete_book(id):
     db.session.commit()
 
     return ""
+
+
+@app.route("/refresh", methods=["POST"])
+def refresh():
+
+    refresh_books()
+    return {}
 
 
 @app.route("/submit", methods=["POST"])

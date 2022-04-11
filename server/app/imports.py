@@ -1,6 +1,8 @@
 # %%
+import datetime
 import os
 import subprocess
+from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
@@ -30,6 +32,11 @@ database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
 # get URLS from database
 def get_urls_from_database(database):
     return [row['properties']['URL']['url'] for row in database['results']]
+
+
+def enrich_database(database):
+    for row in database['results']:
+        enrich_entry(row)
 
 
 def get_epub_from_url(url):
@@ -82,15 +89,78 @@ def convert_epub_to_kepub(path_epub):
 def convert_urls_to_kepubs():
     urls = get_urls_from_database(database)
     for url in urls:
-        epub = get_epub_from_url(url)
-        print(epub.title)
-        epub_path = save_epub_to_file(epub)
-        kepub_path = convert_epub_to_kepub(epub_path)
-        if kepub_path:
-            print(f'✔️ {kepub_path}')
-        else:
-            print(f'〰️ {epub_path}')
-        add_kepub_to_db(epub.creator, epub.title, kepub_path)
+        try:
+            epub = get_epub_from_url(url)
+            print(epub.title)
+            epub_path = save_epub_to_file(epub)
+            kepub_path = convert_epub_to_kepub(epub_path)
+            if kepub_path:
+                print(f'✔️ {kepub_path}')
+            else:
+                print(f'〰️ {epub_path}')
+            add_kepub_to_db(epub.creator, epub.title, kepub_path)
+        except HTTPError:
+            print(f'❌ Skipping URL: {url}')
+
+
+def enrich_entry(row):
+
+    url = row['properties']['URL']['url']
+    id = row['id']
+
+    properties = row['properties']
+
+    title_existing = (
+        properties['Name']['title'][0]['plain_text']
+        if properties['Name']['title'] != []
+        else None
+    )
+    date_added_existing = (
+        properties['Date Added']['date']['start']
+        if properties['Date Added']['date']
+        else None
+    )
+
+    headers = {"User-Agent": "Magic Browser"}
+    req = Request(url=url, headers=headers)
+    webpage = urlopen(req).read()
+    soup = BeautifulSoup(webpage, "html.parser")
+
+    try:
+        title = soup.title.string
+    except AttributeError:
+        title = "Unknown Title"
+
+    update_payload = {}
+
+    if not title_existing and title:
+        update_payload.update(
+            {
+                "Name": {
+                    "type": "title",
+                    "title": [{"type": "text", "text": {"content": title}}],
+                },
+            }
+        )
+
+    if not date_added_existing:
+        update_payload.update(
+            {
+                "Date Added": {
+                    "type": "date",
+                    "date": {
+                        "start": datetime.datetime.strftime(
+                            datetime.date.today(), '%Y-%m-%d'
+                        ),
+                        "end": None,
+                        "time_zone": None,
+                    },
+                }
+            }
+        )
+
+    if update_payload:
+        notion.pages.update(id, properties=update_payload)
 
 
 def add_kepub_to_db(author_name, title, filename):
@@ -120,4 +190,7 @@ def add_kepub_to_db(author_name, title, filename):
 
 
 # %%
-convert_urls_to_kepubs()
+def refresh():
+
+    convert_urls_to_kepubs()
+    enrich_database(database)

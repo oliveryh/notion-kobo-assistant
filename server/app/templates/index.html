@@ -34,6 +34,9 @@
 </head>
 
 <body>
+    <form hx-post="{{ SUBPATH }}/refresh">
+        <button class="btn btn-primary" name="foo" value="upvote">Refresh</button>
+    </form>
     <h1>Book Recommendations</h1>
     <form hx-post="{{ SUBPATH }}/submit" hx-swap="beforeend" hx-target="#new-book" class="mb-3">
         <input type="text" placeholder="Book Title" name="title" class="form-control mb-3" />
