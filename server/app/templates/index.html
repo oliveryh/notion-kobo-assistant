@@ -35,7 +35,7 @@
 
 <body>
     <h1>Book Recommendations</h1>
-    <form hx-post="/pandora/submit" hx-swap="beforeend" hx-target="#new-book" class="mb-3">
+    <form hx-post="{{ SUBPATH }}/submit" hx-swap="beforeend" hx-target="#new-book" class="mb-3">
         <input type="text" placeholder="Book Title" name="title" class="form-control mb-3" />
         <input type="text" placeholder="Book Filename" name="filename" class="form-control mb-3" />
         <input type="text" placeholder="Book Author" name="author" class="form-control mb-3" />
@@ -47,6 +47,7 @@
           <tr>
             <th scope="col">Book Title</th>
             <th scope="col">Book Author</th>
+            <th scope="col">Download</th>
           </tr>
         </thead>
         <tbody id="new-book" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
@@ -54,17 +55,7 @@
             <tr>
                 <td>{{i.title}}</td>
                 <td>{{i.author}}</td>
-                <td>{{i.filename}}</td>
-		<td><a href="p-api/{{i.filename}}">Download</a></td>
-                <td>
-                    <button class="btn btn-primary" 
-                        hx-get="/get-edit-form/{{i.id}}">
-                        Edit Title
-                    </button>
-                </td>
-                <td>
-                    <button hx-delete="/delete/{{i.id}}" class="btn btn-primary">Delete</button>
-                </td>
+		        <td><a href="p-api/{{i.filename}}">Download</a></td>
             </tr>
             {%endfor%}
         </tbody>

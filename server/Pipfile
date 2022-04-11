@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 flask-sqlalchemy = "*"
+notion-client = "*"
+bs4 = "*"
+html2epub = {path = "./Html2Epub"}
+wheel = "*"
+python-dotenv = "*"
 
 [dev-packages]
 black = "*"
@@ -14,6 +19,7 @@ mypy = "*"
 pytest = "*"
 pytest-cov = "*"
 sqlalchemy-stubs = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.8"

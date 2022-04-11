@@ -36,18 +36,6 @@ def get_book_row(id):
     <tr>
         <td>{book.title}</td>
         <td>{author.name}</td>
-        <td>
-            <button class="btn btn-primary"
-                hx-get="/get-edit-form/{id}">
-                Edit Title
-            </button>
-        </td>
-        <td>
-            <button hx-delete="/delete/{id}"
-                class="btn btn-primary">
-                Delete
-            </button>
-        </td>
     </tr>
     """
     return response
@@ -90,18 +78,6 @@ def update_book(id):
     <tr>
         <td>{title}</td>
         <td>{author.name}</td>
-        <td>
-            <button class="btn btn-primary"
-                hx-get="/get-edit-form/{id}">
-                Edit Title
-            </button>
-        </td>
-        <td>
-            <button hx-delete="/delete/{id}"
-                class="btn btn-primary">
-                Delete
-            </button>
-        </td>
     </tr>
     """
     return response
@@ -118,8 +94,6 @@ def delete_book(id):
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    global_book_object = Book()
-
     title = request.form["title"]
     author_name = request.form["author"]
     filename = request.form["filename"]
@@ -131,7 +105,6 @@ def submit():
         book = Book(author_id=author_id, title=title, filename=filename)
         db.session.add(book)
         db.session.commit()
-        global_book_object = book
     else:
         author = Author(name=author_name)
         db.session.add(author)
@@ -140,24 +113,11 @@ def submit():
         book = Book(author_id=author.author_id, title=title, filename=filename)
         db.session.add(book)
         db.session.commit()
-        global_book_object = book
 
     response = f"""
     <tr>
         <td>{title}</td>
         <td>{author_name}</td>
-        <td>
-            <button class="btn btn-primary"
-                hx-get="/get-edit-form/{global_book_object.book_id}">
-                Edit Title
-            </button>
-        </td>
-        <td>
-            <button hx-delete="/delete/{global_book_object.book_id}"
-                class="btn btn-primary">
-                Delete
-            </button>
-        </td>
     </tr>
     """
     return response

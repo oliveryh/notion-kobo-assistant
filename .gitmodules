@@ -1,3 +1,8 @@
 [submodule "Html2Epub"]
 	path = Html2Epub
 	url = https://github.com/oliveryh/Html2Epub.git
+
+[submodule "server/Html2Epub"]
+	path = server/Html2Epub
+	url = https://github.com/oliveryh/Html2Epub
+	branch = "develop"
