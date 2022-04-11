@@ -69,7 +69,7 @@ def save_epub_to_file(epub):
 
 
 def convert_epub_to_kepub(path_epub):
-    kepub_path = path_epub.replace(".epub", ".kepub")
+    kepub_path = path_epub.replace(".epub", ".kepub.epub")
     if not os.path.exists(kepub_path):
         subprocess.run(
             [
