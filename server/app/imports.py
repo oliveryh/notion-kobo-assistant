@@ -6,6 +6,7 @@ from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
+import binascii
 import html2epub
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -22,16 +23,14 @@ BOOK_STORE = os.path.abspath('../store')
 
 notion = Client(auth=NOTION_TOKEN)
 
-
-# %%
-# get data from notion id
-
-database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
-
-
 # get URLS from database
-def get_urls_from_database(database):
-    return [row['properties']['URL']['url'] for row in database['results']]
+def get_urls_from_database():
+    database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
+
+    return [
+        row['properties']['URL']['url'] for row in database['results']
+        if not row['properties']['Date Added']['date']
+    ]
 
 
 def enrich_database(database):
@@ -64,6 +63,8 @@ def get_epub_from_url(url):
             epub.add_chapter(chapter_epub)
     except AttributeError:
         return None
+    except binascii.Error:
+        return None
     return epub
 
 
@@ -94,7 +95,7 @@ def convert_epub_to_kepub(path_epub):
 
 
 def convert_urls_to_kepubs():
-    urls = get_urls_from_database(database)
+    urls = get_urls_from_database()
     for url in urls:
         try:
             epub = get_epub_from_url(url)
