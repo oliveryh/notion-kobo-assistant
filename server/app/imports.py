@@ -1,4 +1,5 @@
 # %%
+import binascii
 import datetime
 import os
 import subprocess
@@ -6,7 +7,6 @@ from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-import binascii
 import html2epub
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -28,7 +28,8 @@ def get_urls_from_database():
     database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
 
     return [
-        row['properties']['URL']['url'] for row in database['results']
+        row['properties']['URL']['url']
+        for row in database['results']
         if not row['properties']['Date Added']['date']
     ]
 
@@ -106,7 +107,7 @@ def convert_urls_to_kepubs():
                     print(f'✔️ {kepub_path}')
                 else:
                     print(f'〰️ {epub_path}')
-                add_kepub_to_db(epub.creator, epub.title, kepub_path)
+                add_kepub_to_db(epub.creator, epub.title, kepub_path, url)
             else:
                 print(f'❌ Skipping URL: {url}')
         except HTTPError:
@@ -175,7 +176,7 @@ def enrich_entry(row):
             notion.pages.update(id, properties=update_payload)
 
 
-def add_kepub_to_db(author_name, title, filename):
+def add_kepub_to_db(author_name, title, filename, url):
 
     author_exists = db.session.query(Author).filter(Author.name == author_name).first()
     # check if author already exists in db
@@ -185,7 +186,12 @@ def add_kepub_to_db(author_name, title, filename):
             db.session.query(Book).filter(Book.title == title).first()
         )
         if not book_exists:
-            book = Book(author_id=author_id, title=title, filename=filename)
+            book = Book(
+                author_id=author_id,
+                title=title,
+                filename=filename,
+                url=url,
+            )
             db.session.add(book)
             db.session.commit()
     else:
@@ -196,7 +202,12 @@ def add_kepub_to_db(author_name, title, filename):
             db.session.query(Book).filter(Book.title == title).first()
         )
         if not book_exists:
-            book = Book(author_id=author.author_id, title=title, filename=filename)
+            book = Book(
+                author_id=author.author_id,
+                title=title,
+                filename=filename,
+                url=url,
+            )
             db.session.add(book)
             db.session.commit()
 

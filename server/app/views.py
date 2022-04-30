@@ -12,7 +12,7 @@ data = [
 
 @app.route("/", methods=["GET"])
 def home():
-    books = db.session.query(Book).all()
+    books = db.session.query(Book).order_by(Book.created_at.desc()).all()
     books_list = []
 
     for book in books:
@@ -22,6 +22,7 @@ def home():
             "title": book.title,
             "author": author.name,
             "filename": book.filename,
+            "url": book.url,
         }
         books_list.append(book_object)
 

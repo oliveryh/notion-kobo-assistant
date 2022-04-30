@@ -1,5 +1,8 @@
-from app import db
+from datetime import datetime
+
 from flask_sqlalchemy.model import DefaultMeta
+
+from app import db
 
 BaseModel: DefaultMeta = db.Model
 
@@ -18,3 +21,5 @@ class Book(BaseModel):
     author_id = db.Column(db.Integer, db.ForeignKey("author.author_id"))
     title = db.Column(db.String)
     filename = db.Column(db.String)
+    url = db.Column(db.String)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
