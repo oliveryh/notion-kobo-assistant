@@ -1,3 +1,4 @@
 /venv/
 *.epub
 *.kepub
+app/sqlite.db
