@@ -214,6 +214,6 @@ def add_kepub_to_db(author_name, title, filename, url):
 
 # %%
 def refresh():
-
     convert_urls_to_kepubs()
+    database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
     enrich_database(database)
