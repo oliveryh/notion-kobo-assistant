@@ -1,2 +1,2 @@
 source $(pipenv --venv)/bin/activate
-nohup python run.py &
+python run.py
