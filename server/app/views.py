@@ -127,6 +127,8 @@ def submit():
     <tr>
         <td>{title}</td>
         <td>{author_name}</td>
+        <td>Pending</td>
+        <td>Pending</td>
     </tr>
     """
     return response
