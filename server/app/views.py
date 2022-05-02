@@ -2,6 +2,7 @@ from flask import render_template, request
 
 from app import app, db
 from app.imports import refresh as refresh_books
+from app.imports import convert_url_to_keypub
 from app.models import Author, Book
 
 data = [
@@ -103,32 +104,16 @@ def refresh():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    title = request.form["title"]
-    author_name = request.form["author"]
-    filename = request.form["filename"]
 
-    author_exists = db.session.query(Author).filter(Author.name == author_name).first()
-    # check if author already exists in db
-    if author_exists:
-        author_id = author_exists.author_id
-        book = Book(author_id=author_id, title=title, filename=filename)
-        db.session.add(book)
-        db.session.commit()
-    else:
-        author = Author(name=author_name)
-        db.session.add(author)
-        db.session.commit()
-
-        book = Book(author_id=author.author_id, title=title, filename=filename)
-        db.session.add(book)
-        db.session.commit()
+    url = request.form["url"]
+    book = convert_url_to_keypub(url)
 
     response = f"""
     <tr>
-        <td>{title}</td>
-        <td>{author_name}</td>
-        <td>Pending</td>
-        <td>Pending</td>
+        <td>{book.title}</td>
+        <td>{book.author.name}</td>
+        <td><a href="{book.url}">Link</a></td>
+        <td><a href="p-api/{book.filename}">Download</a></td>
     </tr>
     """
     return response

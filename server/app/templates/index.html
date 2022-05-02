@@ -19,35 +19,29 @@
                 <i class="sync alternate icon"></i>Refresh</button>
         </form>
         <h2>Articles</h2>
-        <form class="ui form" hx-post="{{ SUBPATH }}/submit" hx-swap="beforeend" hx-target="#new-book" class="mb-3">
+        <form class="ui form" hx-post="{{ SUBPATH }}/submit" hx-swap="afterbegin" hx-target="#new-book" class="mb-3">
+            <label>URL</label>
             <div class="field">
-                <input type="text" placeholder="Book Title" name="title" class="form-control mb-3" />
+                <input type="text" placeholder="URL" name="url" class="form-control mb-3" />
             </div>
-            <div class="field">
-                <input type="text" placeholder="Book Filename" name="filename" class="form-control mb-3" />
-            </div>
-            <div class="field">
-                <input type="text" placeholder="Book Author" name="author" class="form-control mb-3" />
-            </div>
-
             <button type="submit" class="ui button">Submit</button>
         </form>
         <table class="ui celled table">
             <thead>
             <tr>
-                <th>Book Title</th>
-                <th>Book Author</th>
+                <th>Title</th>
+                <th>Author</th>
                 <th>Original</th>
                 <th>Book</th>
             </tr>
             </thead>
             <tbody id="new-book" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
-                {%for i in books%}
+                {% for book in books %}
                 <tr>
-                    <td>{{i.title}}</td>
-                    <td>{{i.author}}</td>
-                    <td><a href="{{i.url}}">Link</a></td>
-                    <td><a href="p-api/{{i.filename}}">Download</a></td>
+                    <td>{{book.title}}</td>
+                    <td>{{book.author}}</td>
+                    <td><a href="{{book.url}}">Link</a></td>
+                    <td><a href="p-api/{{book.filename}}">Download</a></td>
                 </tr>
                 {%endfor%}
             </tbody>

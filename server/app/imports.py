@@ -23,7 +23,14 @@ BOOK_STORE = os.path.abspath('../store')
 
 notion = Client(auth=NOTION_TOKEN)
 
-# get URLS from database
+
+def get_soup(url):
+    headers = {"User-Agent": "Magic Browser"}
+    req = Request(url=url, headers=headers)
+    webpage = urlopen(req).read()
+    return BeautifulSoup(webpage, "html.parser")
+
+
 def get_urls_from_database():
     database = notion.databases.query(database_id=BOOK_COLLECTION_ID)
 
@@ -95,23 +102,28 @@ def convert_epub_to_kepub(path_epub):
     return kepub_filename
 
 
+def convert_url_to_keypub(url):
+    try:
+        epub = get_epub_from_url(url)
+        if epub:
+            epub_path = save_epub_to_file(epub)
+            kepub_path = convert_epub_to_kepub(epub_path)
+            if kepub_path:
+                print(f'✔️ {kepub_path}')
+            else:
+                print(f'〰️ {epub_path}')
+            return add_kepub_to_db(epub.creator, epub.title, kepub_path, url)
+        else:
+            print(f'❌ Skipping URL: {url}')
+    except HTTPError:
+        print(f'❌ Skipping URL: {url}')
+
+
 def convert_urls_to_kepubs():
     urls = get_urls_from_database()
+
     for url in urls:
-        try:
-            epub = get_epub_from_url(url)
-            if epub:
-                epub_path = save_epub_to_file(epub)
-                kepub_path = convert_epub_to_kepub(epub_path)
-                if kepub_path:
-                    print(f'✔️ {kepub_path}')
-                else:
-                    print(f'〰️ {epub_path}')
-                add_kepub_to_db(epub.creator, epub.title, kepub_path, url)
-            else:
-                print(f'❌ Skipping URL: {url}')
-        except HTTPError:
-            print(f'❌ Skipping URL: {url}')
+        convert_url_to_keypub(url)
 
 
 def enrich_entry(row):
@@ -134,10 +146,7 @@ def enrich_entry(row):
 
     if not title_existing or not date_added_existing:
 
-        headers = {"User-Agent": "Magic Browser"}
-        req = Request(url=url, headers=headers)
-        webpage = urlopen(req).read()
-        soup = BeautifulSoup(webpage, "html.parser")
+        soup = get_soup(url)
 
         try:
             title = soup.title.string
@@ -194,6 +203,7 @@ def add_kepub_to_db(author_name, title, filename, url):
             )
             db.session.add(book)
             db.session.commit()
+            return book
     else:
         author = Author(name=author_name)
         db.session.add(author)
@@ -210,6 +220,7 @@ def add_kepub_to_db(author_name, title, filename, url):
             )
             db.session.add(book)
             db.session.commit()
+            return book
 
 
 # %%
