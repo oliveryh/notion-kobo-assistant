@@ -1,0 +1,16 @@
+{% load crispy_forms_tags %}
+
+<div class="ui attached message">
+  <div class="header">
+    Articles
+  </div>
+  <p>Enter a URL below to add an article to your list</p>
+</div>
+<form class="ui form attached fluid segment">
+  <div>
+    {% crispy form %}
+    <div class="ui blue submit button" hx-post="{% url 'article-list' %}" hx-swap="afterbegin" hx-target="#new-book">Submit</div>
+  </div>
+</form>
+<div id="alerts"></div>
+

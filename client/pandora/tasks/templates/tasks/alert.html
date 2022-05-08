@@ -1,0 +1,13 @@
+<div id="alerts" class="ui bottom attached error icon message" hx-swap-oob="outerHTML">
+  <i class="exclamation icon"></i>
+  <div class="content">
+    <div class="header">
+      There were some errors with your input
+    </div>
+    <br />
+      {% for field, error in errors.items %}
+      <strong>{{ field }}: </strong>{{ error }}
+      {% endfor %}
+  </div>
+</div>
+

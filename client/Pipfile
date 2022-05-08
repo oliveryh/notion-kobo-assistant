@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django-filter = "*"
+django-crispy-forms = "*"
+django-livereload-server = "*"
+crispy-forms-semantic-ui = "*"
+Django = "==3.*"
+html2epub = {path = "./Html2Epub"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
