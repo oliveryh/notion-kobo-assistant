@@ -10,6 +10,9 @@ django-livereload-server = "*"
 crispy-forms-semantic-ui = "*"
 Django = "==3.*"
 html2epub = {path = "./Html2Epub"}
+pytest = "*"
+pytest-django = "*"
+pytest-mock = "*"
 
 [dev-packages]
 
