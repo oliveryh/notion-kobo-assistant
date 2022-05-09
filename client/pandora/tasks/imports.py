@@ -5,6 +5,8 @@ import subprocess
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
+from urllib.error import URLError
+from django.core.exceptions import ValidationError
 
 import html2epub
 from bs4 import BeautifulSoup
@@ -13,10 +15,19 @@ BOOK_STORE = os.path.abspath('../store')
 
 
 def get_soup(url):
-    headers = {"User-Agent": "Magic Browser"}
-    req = Request(url=url, headers=headers)
-    webpage = urlopen(req).read()
-    return BeautifulSoup(webpage, "html.parser")
+    try:
+        headers = {"User-Agent": "Magic Browser"}
+        req = Request(url=url, headers=headers)
+        webpage = urlopen(req).read()
+        return BeautifulSoup(webpage, "html.parser")
+    except ValueError as exc:
+        raise ValidationError({
+            'url': 'Invalid URL',
+        })
+    except URLError as exc:
+        raise ValidationError({
+            'url': 'Invalid URL',
+        })
 
 
 def get_article_from_url(url):
