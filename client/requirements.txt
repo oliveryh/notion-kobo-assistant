@@ -1,0 +1,6 @@
+django==3.*
+django-filter
+django-crispy-forms
+django-livereload-server
+crispy-forms-semantic-ui
+./Html2Epub

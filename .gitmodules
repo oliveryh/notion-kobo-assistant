@@ -2,7 +2,6 @@
 	path = Html2Epub
 	url = https://github.com/oliveryh/Html2Epub.git
 
-[submodule "server/Html2Epub"]
-	path = server/Html2Epub
+[submodule "client/Html2Epub"]
+	path = client/Html2Epub
 	url = https://github.com/oliveryh/Html2Epub
-	branch = "develop"
