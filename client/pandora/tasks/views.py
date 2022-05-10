@@ -3,6 +3,7 @@ import logging
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.urls.base import get_script_prefix
 from pandora.tasks.forms import ArticleForm
 from pandora.tasks.models import Article
 
@@ -46,6 +47,7 @@ def article_list_view(request):
     context = {
         'articles': Article.objects.all().order_by('-created_at'),
         'form': form,
+        'script_prefix': get_script_prefix(),
     }
 
     return render(request, "tasks/article_list.html", context)
