@@ -1,9 +1,12 @@
 import logging
 
+import markdown
 from django.core.exceptions import ValidationError
+from django.db.models import BooleanField, ExpressionWrapper, Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls.base import get_script_prefix
+
 from pandora.tasks.forms import ArticleForm
 from pandora.tasks.models import Article
 
@@ -24,6 +27,7 @@ def raise_errors(request, form):
     )
     return response
 
+
 def article_list_view(request):
 
     form = ArticleForm(request.POST or None)
@@ -38,16 +42,33 @@ def article_list_view(request):
                 article.name = form.cleaned_data['name']
                 article = form.save()
                 context = {'article': article}
-                return render(request, "tasks/article_detail.html", context)
+                return render(request, "tasks/article_table_detail.html", context)
             except ValidationError:
                 return raise_errors(request, form)
         else:
             return raise_errors(request, form)
 
     context = {
-        'articles': Article.objects.all().order_by('-created_at'),
+        'articles': Article.objects.all()
+        .annotate(
+            is_highlighted=ExpressionWrapper(
+                ~Q(highlights__exact=''), output_field=BooleanField()
+            )
+        )
+        .order_by('-created_at'),
         'form': form,
         'script_prefix': get_script_prefix(),
     }
 
     return render(request, "tasks/article_list.html", context)
+
+
+def article_detail_view(request, pk):
+
+    article = Article.objects.get(pk=pk)
+    context = {'article': article}
+
+    article_highlights_html = markdown.markdown(article.highlights)
+    context['article_highlights_html'] = article_highlights_html
+
+    return render(request, "tasks/article_detail.html", context)

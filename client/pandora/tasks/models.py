@@ -22,5 +22,8 @@ class Article(models.Model):
     name = models.CharField(_("Article Name"), max_length=255)
     url = models.URLField(_("Article URL"))
     filename = models.CharField(_("Article Filename"), max_length=255)
+    highlights = models.TextField(_("Article Highlights"), blank=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
+    is_complete = models.BooleanField(_("Is Complete"), default=False)
+    time_read_minutes = models.IntegerField(_("Time Read Seconds"), default=0)

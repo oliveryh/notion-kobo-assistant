@@ -13,8 +13,13 @@ html2epub = {path = "./Html2Epub"}
 pytest = "*"
 pytest-django = "*"
 pytest-mock = "*"
+kobuddy = "*"
+markdownify = "*"
+regex = "*"
+markdown = "*"
 
 [dev-packages]
+isort = "*"
 
 [requires]
 python_version = "3.8"

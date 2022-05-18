@@ -1,5 +1,7 @@
 import pytest
+
 from pandora.tasks.forms import ArticleForm
+
 
 class TestArticleForm:
 
