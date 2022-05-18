@@ -2,14 +2,13 @@
 import binascii
 import os
 import subprocess
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
-from urllib.error import URLError
-from django.core.exceptions import ValidationError
 
 import html2epub
 from bs4 import BeautifulSoup
+from django.core.exceptions import ValidationError
 
 BOOK_STORE = os.path.abspath('../store')
 

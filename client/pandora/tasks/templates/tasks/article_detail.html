@@ -1,6 +1,7 @@
-<tr>
-    <td>{{article.name}}</td>
-    <td>{{article.author.name}}</td>
-    <td><a href="{{article.url}}">Link</a></td>
-    <td><a href="{{script_prefix}}p-api/{{article.filename}}">Download</a></td>
-</tr>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{article.name}}</h1>
+<h3>{{article.author.name}}</h3>
+{{article_highlights_html | safe}}
+{% endblock %}

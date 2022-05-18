@@ -1,0 +1,17 @@
+<tr>
+    <td>{% if article.is_complete %}<i class="check icon"></i>{% endif %}</td>
+    <td>{% if article.is_highlighted %}
+        <a href="{{script_prefix}}article/{{article.id}}">
+            <i class="book icon"></i>
+        </a>
+        {% endif %}
+    </td>
+    <td>{% if article.time_read_minutes != 0 %}
+        {{ article.time_read_minutes }}
+        {% endif %}
+    </td>
+    <td>{{article.name}}</td>
+    <td>{{article.author.name}}</td>
+    <td><a href="{{article.url}}">Link</a></td>
+    <td><a href="{{script_prefix}}p-api/{{article.filename}}">Download</a></td>
+</tr>
