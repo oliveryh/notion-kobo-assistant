@@ -1,0 +1,18 @@
+<table class="ui celled table">
+    <thead>
+    <tr>
+        <th><i class="check icon"></i></th>
+        <th><i class="book icon"></i></th>
+        <th><i class="stopwatch icon"></i></th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Original</th>
+        <th>Book</th>
+    </tr>
+    </thead>
+    <tbody id="new-book" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
+        {% for article in object_list %}
+            {% include "tasks/article_table_detail.html" with article=article %}
+        {% endfor %}
+    </tbody>
+</table>

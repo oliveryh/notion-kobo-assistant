@@ -4,23 +4,15 @@
 {% block content %}
 
 {% include "tasks/article_create_form.html" %}
-<table class="ui celled table">
-    <thead>
-    <tr>
-        <th><i class="check icon"></i></th>
-        <th><i class="book icon"></i></th>
-        <th><i class="stopwatch icon"></i></th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Original</th>
-        <th>Book</th>
-    </tr>
-    </thead>
-    <tbody id="new-book" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
-        {% for article in articles %}
-            {% include "tasks/article_table_detail.html" with article=article %}
-        {% endfor %}
-    </tbody>
-    
-</table>
+<br />
+<form hx-trigger="keyup,mouseup delay:100ms" hx-get="{% url 'article-filter' %}" hx-target="#article-list">
+    <div class="ui toggle checkbox">
+    <input type="checkbox" name="is_complete" value="false">
+    <label>Hide Incomplete Articles</label>
+    </div>
+</form>
+<br />
+<div id="article-list">
+    {% include "tasks/article_filter.html" with object_list=object_list %}
+</div>
 {% endblock %}

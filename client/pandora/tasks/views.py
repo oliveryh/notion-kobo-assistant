@@ -6,11 +6,27 @@ from django.db.models import BooleanField, ExpressionWrapper, Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls.base import get_script_prefix
+from pandora.tasks.filters import ArticleListFilter
 
 from pandora.tasks.forms import ArticleForm
 from pandora.tasks.models import Article
 
 logger = logging.getLogger("tasker")
+
+
+def article_filter_view(request):
+
+    filter = ArticleListFilter(request.GET, queryset=Article.objects.all())
+    object_list = filter.qs.annotate(
+        is_highlighted=ExpressionWrapper(
+            ~Q(highlights__exact=''), output_field=BooleanField()
+        )
+    ).order_by('-created_at')
+    return render(
+        request,
+        "tasks/article_filter.html",
+        {'filter': filter, 'object_list': object_list},
+    )
 
 
 def raise_errors(request, form):
@@ -31,6 +47,7 @@ def raise_errors(request, form):
 def article_list_view(request):
 
     form = ArticleForm(request.POST or None)
+    filter = ArticleListFilter
 
     if request.method == "POST":
         logger.debug(request.POST)
@@ -49,13 +66,14 @@ def article_list_view(request):
             return raise_errors(request, form)
 
     context = {
-        'articles': Article.objects.all()
+        'object_list': Article.objects.all()
         .annotate(
             is_highlighted=ExpressionWrapper(
                 ~Q(highlights__exact=''), output_field=BooleanField()
             )
         )
         .order_by('-created_at'),
+        'filter': filter,
         'form': form,
         'script_prefix': get_script_prefix(),
     }
