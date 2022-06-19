@@ -3,7 +3,7 @@ import sqlite3
 from urllib.request import Request, urlopen
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 from markdownify import markdownify as md
 
 from pandora.tasks.kobo import Library
@@ -35,8 +35,6 @@ def get_highlight_markdown(url, highlights):
     link_mapping = {}
 
     def get_segment_md(wt: str, content: str) -> str:
-
-        print(content)
 
         haystack_raw = md(wt)
         search = content
@@ -109,7 +107,8 @@ def get_highlight_markdown(url, highlights):
 
         return res
 
-    md_output.append("# Highlights")
+    if highlights:
+        md_output.append("# Highlights")
     for highlight in highlights:
 
         if highlight["type"] == "chapter":
@@ -127,6 +126,16 @@ def get_highlight_markdown(url, highlights):
 
 class Command(BaseCommand):
     help = 'Sync Kobo articles'
+
+    def add_arguments(self, parser: CommandParser) -> None:
+
+        parser.add_argument(
+            '--force-update',
+            action='store_true',
+            help='Refresh all article highlights including ones already completed',
+        )
+
+        return super().add_arguments(parser)
 
     def handle(self, *args, **options):
 
@@ -147,10 +156,9 @@ class Command(BaseCommand):
         articles = Article.objects.all()
 
         for article in articles:
-            print(article.name)
             kobo_article = library.get_book_by_title(article.name)
             if kobo_article:
-                if kobo_article.is_finished():
+                if kobo_article.is_finished() or options['force_update']:
                     highlights = kobo_article.get_highlights()
                     markdown = get_highlight_markdown(article.url, highlights)
                     article.highlights = markdown
