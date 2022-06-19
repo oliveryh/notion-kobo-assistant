@@ -17,6 +17,7 @@ kobuddy = "*"
 markdownify = "*"
 regex = "*"
 markdown = "*"
+pandas = "*"
 
 [dev-packages]
 isort = "*"
