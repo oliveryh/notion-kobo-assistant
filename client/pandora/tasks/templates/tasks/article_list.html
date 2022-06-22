@@ -7,7 +7,7 @@
 <br />
 <form hx-trigger="keyup,mouseup delay:100ms" hx-get="{% url 'article-filter' %}" hx-target="#article-list">
     <div class="ui toggle checkbox">
-    <input type="checkbox" name="is_complete" value="false">
+    <input type="checkbox" name="completed_at" value="false">
     <label>Hide Incomplete Articles</label>
     </div>
 </form>
