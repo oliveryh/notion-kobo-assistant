@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import pytz
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.query import QuerySet
@@ -25,5 +28,18 @@ class Article(models.Model):
     highlights = models.TextField(_("Article Highlights"), blank=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
-    is_complete = models.BooleanField(_("Is Complete"), default=False)
+    completed_at = models.DateTimeField(_("Completed At"), blank=True, null=True)
     time_read_minutes = models.IntegerField(_("Time Read Seconds"), default=0)
+
+    @property
+    def completed_at_days_since(self):
+        if self.completed_at:
+            now = datetime.utcnow().replace(tzinfo=pytz.utc)
+            delta = now - self.completed_at
+            d = delta.days
+            if d == 0:
+                return 'Today'
+            elif d == 1:
+                return '1 day ago'
+            else:
+                return f'{d} days ago'

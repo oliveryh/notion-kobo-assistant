@@ -1,5 +1,5 @@
 <tr>
-    <td>{% if article.is_complete %}<i class="check icon"></i>{% endif %}</td>
+    <td>{% if article.completed_at %}<div title="{{article.completed_at}}">{{article.completed_at_days_since}}</div>{% endif %}</td>
     <td>{% if article.is_highlighted %}
         <a href="{{script_prefix}}article/{{article.id}}">
             <i class="book icon"></i>

@@ -1,3 +1,4 @@
+import datetime
 import os
 import sqlite3
 from urllib.request import Request, urlopen
@@ -162,6 +163,6 @@ class Command(BaseCommand):
                     highlights = kobo_article.get_highlights()
                     markdown = get_highlight_markdown(article.url, highlights)
                     article.highlights = markdown
-                    article.is_complete = True
+                    article.completed_at = datetime.datetime.now()
                     article.time_read_minutes = kobo_article.get_time_spent()
                     article.save()
