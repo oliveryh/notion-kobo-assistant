@@ -1,0 +1,62 @@
+Screen {
+  layout: vertical;
+  overflow-y: auto;
+}
+
+Horizontal {
+  background: $panel;
+  color: $text;
+  layout: horizontal;
+  overflow-y: auto;
+  padding: 1;
+  margin: 1 1;
+}
+
+ArticleContent {
+  width: 95%;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 0 2;
+  margin: 1 2;
+  height: auto;
+  layout: vertical;
+}
+
+HighlightColumn {
+  width: 5%;
+}
+
+Vertical > Static {
+  padding: 0 1 1 1;
+}
+
+.column {
+  width: 1fr;
+}
+
+Input {
+    dock: top;
+    margin: 1 0;
+}
+
+ArticleList {
+    margin: 2 1 0 1;
+    height: 10;
+}
+
+#notification {
+    /* dock: top; */
+    width: 100%;
+    height: 1;
+    background: green;
+    margin: 0 1;
+    content-align: center middle;
+    transition: opacity 0.3s;
+    opacity: 0%;
+    layer: sidebar;
+  }
+
+  #notification.-active {
+    transition: opacity 0.3s;
+    opacity: 100%;
+  }
